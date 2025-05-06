@@ -1,0 +1,65 @@
+/* 引入Ant Design样式 */
+@import '~antd/dist/reset.css';
+
+/* 全局样式 */
+.App {
+  min-height: 100vh;
+}
+
+/* 登录页样式 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form-button {
+  width: 100%;
+}
+
+/* 账号列表页样式 */
+.account-list-container {
+  padding: 24px;
+}
+
+.stats-row {
+  margin-bottom: 24px;
+}
+
+.account-table {
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 账号详情弹窗样式 */
+.account-detail-modal .ant-modal-body {
+  padding: 24px;
+}
+
+.account-detail-item {
+  margin-bottom: 16px;
+}
+
+.account-detail-label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+/* 个人设置页样式 */
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 管理员页面样式 */
+.admin-container {
+  padding: 24px;
+}
