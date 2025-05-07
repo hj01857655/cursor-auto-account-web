@@ -2,35 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Card, Form, Input, Button, message, Divider } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined, GlobalOutlined } from '@ant-design/icons';
 import { userApi } from '../services/api';
+import { useUser } from '../contexts/UserContext';
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { user, updateUser } = useUser();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  // 获取用户信息
-  const fetchUserInfo = async () => {
-    try {
-      setLoading(true);
-      const response = await userApi.getUserInfo();
-
-      if (response.status === 'success') {
-        setUser(response.user);
-        // 设置表单初始值
-        form.setFieldsValue({
-          username: response.user.username,
-          email: response.user.email,
-          domain: response.user.domain,
-          temp_email_address: response.user.temp_email_address,
-        });
-      } else {
-        message.error(response.message || '获取用户信息失败');
-      }
-    } catch (error) {
-      console.error('获取用户信息失败:', error);
-      message.error('获取用户信息失败: ' + (error.response?.data?.message || error.message));
-    } finally {
-      setLoading(false);
+  // 设置表单初始值
+  const setFormValues = () => {
+    if (user) {
+      form.setFieldsValue({
+        username: user.username,
+        email: user.email,
+        domain: user.domain,
+        temp_email_address: user.temp_email_address,
+      });
     }
   };
 
@@ -49,7 +36,8 @@ const Profile = () => {
 
       if (response.status === 'success') {
         message.success('用户信息更新成功');
-        setUser(response.user);
+        // 更新全局用户状态
+        updateUser(response.user);
       } else {
         message.error(response.message || '更新用户信息失败');
       }
@@ -61,11 +49,11 @@ const Profile = () => {
     }
   };
 
-  // 初始化时获取用户信息
+  // 当用户信息变化时，更新表单
   useEffect(() => {
-    fetchUserInfo();
+    setFormValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   return (
     <Card title="个人设置">

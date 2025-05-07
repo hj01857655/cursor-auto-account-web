@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Layout, Menu, Button, Dropdown, message } from 'antd';
 import {
   UserOutlined,
@@ -10,37 +10,21 @@ import {
   IdcardOutlined
 } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { userApi } from '../services/api';
 import { clearToken, isAdmin } from '../utils';
+import { useUser } from '../contexts/UserContext';
 
 const { Header, Sider, Content } = Layout;
 
 const MainLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, clearUser } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // 获取用户信息
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await userApi.getUserInfo();
-        if (response.status === 'success') {
-          setUser(response.user);
-        }
-      } catch (error) {
-        console.error('获取用户信息失败:', error);
-      }
-    };
-
-    fetchUserInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // 处理登出
   const handleLogout = () => {
     clearToken();
+    clearUser(); // 清除用户上下文
     message.success('已成功退出登录');
     navigate('/login');
   };

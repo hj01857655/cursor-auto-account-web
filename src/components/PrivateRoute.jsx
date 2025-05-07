@@ -1,49 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Spin } from 'antd';
-import { userApi } from '../services/api';
 import { isAdmin } from '../utils';
 import MainLayout from '../layouts/MainLayout';
+import { useUser } from '../contexts/UserContext';
 
 // 私有路由组件，用于保护需要登录才能访问的页面
 const PrivateRoute = ({ children, adminOnly = false }) => {
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, loading, isAuthenticated, fetchUserInfo } = useUser();
   const location = useLocation();
 
+  // 确保用户信息已加载
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // 检查localStorage中是否有token
-        const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-        if (!token) {
-          setIsAuthenticated(false);
-          setLoading(false);
-          return;
-        }
-
-        // 验证token有效性
-        const response = await userApi.getUserInfo();
-
-        if (response.status === 'success') {
-          setUser(response.user);
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error('验证用户失败:', error);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // 如果有token但用户未认证且不在加载中，手动触发获取用户信息
+    if (token && !isAuthenticated && !loading) {
+      fetchUserInfo();
+    }
+  }, [isAuthenticated, loading, fetchUserInfo]);
 
   // 如果正在加载，显示加载指示器
   if (loading) {
@@ -54,8 +29,8 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
     );
   }
 
-  // 如果未认证，重定向到登录页面
-  if (!isAuthenticated) {
+  // 如果未认证且不在加载中，重定向到登录页面
+  if (!isAuthenticated && !loading) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

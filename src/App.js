@@ -14,44 +14,49 @@ import Admin from './pages/Admin';
 // 权限控制组件
 import PrivateRoute from './components/PrivateRoute';
 
+// 用户上下文
+import { UserProvider } from './contexts/UserContext';
+
 function App() {
   return (
     <ConfigProvider locale={zhCN}>
-      <Router>
-        <Routes>
-          {/* 公开路由 */}
-          <Route path="/login" element={<Login />} />
+      <UserProvider>
+        <Router>
+          <Routes>
+            {/* 公开路由 */}
+            <Route path="/login" element={<Login />} />
 
-          {/* 需要登录的路由 */}
-          <Route path="/" element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          } />
+            {/* 需要登录的路由 */}
+            <Route path="/" element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            } />
 
-          <Route path="/accounts" element={
-            <PrivateRoute>
-              <AccountList />
-            </PrivateRoute>
-          } />
+            <Route path="/accounts" element={
+              <PrivateRoute>
+                <AccountList />
+              </PrivateRoute>
+            } />
 
-          <Route path="/profile" element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          } />
+            <Route path="/profile" element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            } />
 
-          {/* 管理员路由 */}
-          <Route path="/admin" element={
-            <PrivateRoute adminOnly={true}>
-              <Admin />
-            </PrivateRoute>
-          } />
+            {/* 管理员路由 */}
+            <Route path="/admin" element={
+              <PrivateRoute adminOnly={true}>
+                <Admin />
+              </PrivateRoute>
+            } />
 
-          {/* 默认重定向到首页 */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
+            {/* 默认重定向到首页 */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </UserProvider>
     </ConfigProvider>
   );
 }
