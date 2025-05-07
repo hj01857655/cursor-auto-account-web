@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, Button, Alert, Typography, Space } from 'antd';
+import { Card, Button, Alert, Typography, Space, Row, Col, Divider } from 'antd';
 import { Link } from 'react-router-dom';
-import { WarningOutlined, IdcardOutlined, UserOutlined } from '@ant-design/icons';
+import { WarningOutlined, IdcardOutlined, UserOutlined, HeartOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -42,6 +42,47 @@ const Home = () => {
             <Link to="/profile">个人中心</Link>
           </Button>
         </Space>
+      </Card>
+
+      <Divider />
+
+      <Card
+        title={
+          <Title level={3} style={{ margin: 0, color: '#eb2f96' }}>
+            <HeartOutlined style={{ marginRight: 8 }} />赞助支持
+          </Title>
+        }
+        style={{ marginTop: 24, background: 'linear-gradient(to right, #fff0f6, #fff)' }}
+        bordered={true}
+      >
+        <Typography>
+          <Paragraph>
+            <Text strong style={{ fontSize: 16 }}>
+              如果您觉得本服务对您有所帮助，欢迎扫描下方二维码赞助支持，让服务持续运行！
+            </Text>
+          </Paragraph>
+        </Typography>
+
+        <Row gutter={24} style={{ marginTop: 20 }}>
+          <Col xs={24} sm={12}>
+            <Card
+              hoverable
+              style={{ textAlign: 'center', borderColor: '#52c41a' }}
+              cover={<img alt="微信支付" src="/21746583176_.pic.jpg" style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain', padding: '10px' }} />}
+            >
+              <Card.Meta title="微信支付" description="感谢您的支持！" />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Card
+              hoverable
+              style={{ textAlign: 'center', borderColor: '#1890ff' }}
+              cover={<img alt="支付宝" src="/31746583177_.pic.jpg" style={{ maxWidth: '100%', maxHeight: 300, objectFit: 'contain', padding: '10px' }} />}
+            >
+              <Card.Meta title="支付宝" description="感谢您的支持！" />
+            </Card>
+          </Col>
+        </Row>
       </Card>
     </div>
   );
