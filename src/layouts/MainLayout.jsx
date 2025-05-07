@@ -77,7 +77,26 @@ const MainLayout = ({ children }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" style={{ height: '32px', margin: '16px', background: 'rgba(255, 255, 255, 0.3)' }} />
+        <div className="logo" style={{
+          height: '40px',
+          margin: '16px 0',
+          padding: '0',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden',
+          background: 'rgba(255, 255, 255, 0.1)'
+        }}>
+          <img src="/favicon.svg" alt="Logo" style={{ height: '28px', width: '28px', marginRight: collapsed ? '0' : '6px' }} />
+          {!collapsed && <span style={{
+            color: 'white',
+            fontSize: '14px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>cursor accounts</span>}
+        </div>
         <Menu
           theme="dark"
           mode="inline"
