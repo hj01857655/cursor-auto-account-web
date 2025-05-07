@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Card, Statistic, Row, Col, Modal, message, Tag, Switch, Space, Popconfirm } from 'antd';
-import { CopyOutlined, ReloadOutlined, UserOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Button, Card, Statistic, Row, Col, Modal, message, Tag, Switch, Space, Popconfirm, List, Avatar, Divider } from 'antd';
+import { CopyOutlined, ReloadOutlined, UserOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, MailOutlined, LockOutlined, CalendarOutlined } from '@ant-design/icons';
 import { accountApi } from '../services/api';
-import { formatTimestamp, copyToClipboard, isAccountExpired, getFullName } from '../utils';
+import { formatTimestamp, copyToClipboard, isAccountExpired, getFullName, isMobile, isSmallMobile } from '../utils';
 
 const AccountList = () => {
   const [accounts, setAccounts] = useState([]);
@@ -20,6 +20,19 @@ const AccountList = () => {
     pageSize: 10,
     total: 0
   });
+  const [mobile, setMobile] = useState(isMobile());
+
+  // 监听窗口大小变化，更新移动设备状态
+  useEffect(() => {
+    const handleResize = () => {
+      setMobile(isMobile());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // 获取账号列表
   const fetchAccounts = async (page = pagination.current, pageSize = pagination.pageSize) => {
@@ -283,10 +296,93 @@ const AccountList = () => {
     },
   ];
 
-  return (
-    <div>
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={8}>
+  // 移动设备上的列表项渲染
+  const renderMobileAccountItem = (account) => {
+    const expired = isAccountExpired(account.expire_time);
+
+    return (
+      <List.Item
+        key={account.id}
+        actions={[
+          <Button
+            type="text"
+            icon={<CopyOutlined />}
+            onClick={() => copyAccountInfo(account)}
+          />,
+          <Popconfirm
+            title="确定要删除此账号吗？"
+            description="删除后将无法在此页面查看，但管理员仍可查看"
+            onConfirm={() => deleteAccount(account.id)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+            />
+          </Popconfirm>
+        ]}
+      >
+        <List.Item.Meta
+          avatar={<Avatar icon={<UserOutlined />} />}
+          title={
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>{getFullName(account.first_name, account.last_name)}</span>
+              {expired ? (
+                <Tag color="red">已过期</Tag>
+              ) : (
+                <Switch
+                  checkedChildren="已用"
+                  unCheckedChildren="未用"
+                  checked={account.is_used === 1}
+                  onChange={(checked) => updateAccountStatus(account.id, checked)}
+                  size="small"
+                />
+              )}
+            </div>
+          }
+          description={
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <MailOutlined style={{ marginRight: 8 }} />
+                <span style={{ flex: 1 }}>{account.email}</span>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<CopyOutlined />}
+                  onClick={() => copyField(account.email)}
+                />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <LockOutlined style={{ marginRight: 8 }} />
+                <span style={{ flex: 1 }}>••••••••</span>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<CopyOutlined />}
+                  onClick={() => copyField(account.password)}
+                />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <CalendarOutlined style={{ marginRight: 8 }} />
+                <span>{formatTimestamp(account.expire_time)}</span>
+              </div>
+            </div>
+          }
+        />
+      </List.Item>
+    );
+  };
+
+  // 响应式统计卡片
+  const renderStatCards = () => {
+    const colSpan = mobile ? 24 : 8;
+    const gutter = mobile ? [0, 16] : 16;
+
+    return (
+      <Row gutter={gutter} style={{ marginBottom: mobile ? 8 : 16 }}>
+        <Col span={colSpan} style={{ marginBottom: mobile ? 16 : 0 }}>
           <Card>
             <Statistic
               title="总账号数"
@@ -295,7 +391,7 @@ const AccountList = () => {
             />
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={colSpan} style={{ marginBottom: mobile ? 16 : 0 }}>
           <Card>
             <Statistic
               title="已使用账号"
@@ -305,7 +401,7 @@ const AccountList = () => {
             />
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={colSpan}>
           <Card>
             <Statistic
               title="可用账号"
@@ -316,36 +412,59 @@ const AccountList = () => {
           </Card>
         </Col>
       </Row>
+    );
+  };
+
+  return (
+    <div>
+      {renderStatCards()}
 
       <Card
         title="账号列表"
         extra={
-          <Space>
+          <Space size={mobile ? 'small' : 'middle'}>
             <Button
               icon={<ReloadOutlined />}
               onClick={fetchAccounts}
               loading={loading}
+              size={mobile ? 'small' : 'middle'}
             >
-              刷新
+              {!isSmallMobile() && '刷新'}
             </Button>
             <Button
               type="primary"
               onClick={getNewAccount}
               loading={getAccountLoading}
+              size={mobile ? 'small' : 'middle'}
             >
-              获取新账号
+              {isSmallMobile() ? '新账号' : '获取新账号'}
             </Button>
           </Space>
         }
       >
-        <Table
-          columns={columns}
-          dataSource={accounts}
-          rowKey="id"
-          loading={loading}
-          pagination={pagination}
-          onChange={handleTableChange}
-        />
+        {mobile ? (
+          <List
+            itemLayout="vertical"
+            dataSource={accounts}
+            renderItem={renderMobileAccountItem}
+            loading={loading}
+            pagination={{
+              ...pagination,
+              size: 'small',
+              onChange: (page, pageSize) => fetchAccounts(page, pageSize)
+            }}
+          />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={accounts}
+            rowKey="id"
+            loading={loading}
+            pagination={pagination}
+            onChange={handleTableChange}
+            scroll={{ x: 'max-content' }}
+          />
+        )}
       </Card>
 
       {/* 账号详情弹窗 */}
@@ -365,13 +484,70 @@ const AccountList = () => {
             关闭
           </Button>
         ]}
+        width={mobile ? '95%' : 520}
+        styles={{ body: { padding: mobile ? '16px' : '24px' } }}
       >
         {selectedAccount && (
           <div>
-            <p><strong>邮箱:</strong> {selectedAccount.email}</p>
-            <p><strong>密码:</strong> {selectedAccount.password}</p>
-            <p><strong>姓名:</strong> {getFullName(selectedAccount.first_name, selectedAccount.last_name)}</p>
-            <p><strong>过期时间:</strong> {formatTimestamp(selectedAccount.expire_time)}</p>
+            {mobile ? (
+              <List>
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<MailOutlined />} />}
+                    title="邮箱"
+                    description={
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ flex: 1 }}>{selectedAccount.email}</span>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<CopyOutlined />}
+                          onClick={() => copyField(selectedAccount.email)}
+                        />
+                      </div>
+                    }
+                  />
+                </List.Item>
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<LockOutlined />} />}
+                    title="密码"
+                    description={
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ flex: 1 }}>{selectedAccount.password}</span>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<CopyOutlined />}
+                          onClick={() => copyField(selectedAccount.password)}
+                        />
+                      </div>
+                    }
+                  />
+                </List.Item>
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<UserOutlined />} />}
+                    title="姓名"
+                    description={getFullName(selectedAccount.first_name, selectedAccount.last_name)}
+                  />
+                </List.Item>
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<CalendarOutlined />} />}
+                    title="过期时间"
+                    description={formatTimestamp(selectedAccount.expire_time)}
+                  />
+                </List.Item>
+              </List>
+            ) : (
+              <div>
+                <p><strong>邮箱:</strong> {selectedAccount.email} <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => copyField(selectedAccount.email)} /></p>
+                <p><strong>密码:</strong> {selectedAccount.password} <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => copyField(selectedAccount.password)} /></p>
+                <p><strong>姓名:</strong> {getFullName(selectedAccount.first_name, selectedAccount.last_name)}</p>
+                <p><strong>过期时间:</strong> {formatTimestamp(selectedAccount.expire_time)}</p>
+              </div>
+            )}
           </div>
         )}
       </Modal>

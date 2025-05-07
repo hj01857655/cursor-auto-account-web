@@ -63,4 +63,99 @@ code {
     font-size: 12px;
     padding: 0 8px;
   }
+
+  .ant-card-head-title {
+    font-size: 14px;
+  }
+
+  .ant-statistic-title {
+    font-size: 12px;
+  }
+
+  .ant-statistic-content {
+    font-size: 20px !important;
+  }
+
+  .ant-modal-title {
+    font-size: 16px;
+  }
+
+  .ant-list-item-meta-title {
+    font-size: 14px;
+  }
+
+  .ant-list-item-meta-description {
+    font-size: 12px;
+  }
+
+  /* 调整表单在移动设备上的样式 */
+  .ant-form-item-label {
+    padding-bottom: 4px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  /* 调整抽屉菜单样式 */
+  .ant-drawer-title {
+    font-size: 16px;
+  }
+
+  /* 调整移动设备上的内容间距 */
+  .ant-layout-content {
+    padding: 12px !important;
+  }
+}
+
+/* 超小屏幕设备 */
+@media (max-width: 480px) {
+  .ant-card-body {
+    padding: 12px;
+  }
+
+  .ant-table {
+    font-size: 11px;
+  }
+
+  .ant-btn {
+    font-size: 11px;
+    padding: 0 4px;
+  }
+
+  .ant-statistic-content {
+    font-size: 18px !important;
+  }
+
+  /* 在超小屏幕上隐藏某些表格列 */
+  .ant-table-cell-ellipsis {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 调整移动设备上的内容间距 */
+  .ant-layout-content {
+    padding: 8px !important;
+    margin: 8px !important;
+  }
+
+  /* 调整列表项样式 */
+  .ant-list-item {
+    padding: 8px 12px;
+  }
+
+  /* 调整头部样式 */
+  .ant-layout-header {
+    padding: 0 8px !important;
+    height: 48px !important;
+  }
+
+  /* 调整按钮大小 */
+  .ant-btn-sm {
+    font-size: 10px;
+    height: 22px;
+    padding: 0px 4px;
+  }
 }

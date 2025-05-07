@@ -1,7 +1,7 @@
 // 格式化时间戳为日期字符串
 export const formatTimestamp = (timestamp) => {
   if (!timestamp) return '';
-  
+
   const date = new Date(timestamp * 1000);
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
@@ -16,7 +16,7 @@ export const formatTimestamp = (timestamp) => {
 // 检查账号是否过期
 export const isAccountExpired = (expireTime) => {
   if (!expireTime) return true;
-  
+
   const currentTimestamp = Math.floor(Date.now() / 1000);
   return currentTimestamp > expireTime;
 };
@@ -62,4 +62,59 @@ export const clearToken = () => {
 // 获取当前用户是否为管理员
 export const isAdmin = (user) => {
   return user && user.id === 1;
+};
+
+// 响应式断点
+export const BREAKPOINTS = {
+  xs: 480,  // 超小屏幕，如手机竖屏
+  sm: 576,  // 小屏幕，如手机横屏
+  md: 768,  // 中等屏幕，如平板
+  lg: 992,  // 大屏幕，如桌面显示器
+  xl: 1200, // 超大屏幕
+  xxl: 1600 // 特大屏幕
+};
+
+// 检测是否为移动设备
+export const isMobile = () => {
+  return window.innerWidth <= BREAKPOINTS.md ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
+// 检测是否为小屏幕移动设备
+export const isSmallMobile = () => {
+  return window.innerWidth <= BREAKPOINTS.sm;
+};
+
+// 获取当前设备类型
+export const getDeviceType = () => {
+  const width = window.innerWidth;
+  if (width <= BREAKPOINTS.xs) return 'xs';
+  if (width <= BREAKPOINTS.sm) return 'sm';
+  if (width <= BREAKPOINTS.md) return 'md';
+  if (width <= BREAKPOINTS.lg) return 'lg';
+  if (width <= BREAKPOINTS.xl) return 'xl';
+  return 'xxl';
+};
+
+// 根据屏幕大小返回不同的值
+export const responsiveValue = (options) => {
+  const deviceType = getDeviceType();
+  // 如果有精确匹配的设备类型，则返回对应值
+  if (options[deviceType] !== undefined) {
+    return options[deviceType];
+  }
+
+  // 否则返回最接近的较小设备的值
+  const deviceOrder = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
+  const currentIndex = deviceOrder.indexOf(deviceType);
+
+  // 向下查找最近的定义值
+  for (let i = currentIndex - 1; i >= 0; i--) {
+    if (options[deviceOrder[i]] !== undefined) {
+      return options[deviceOrder[i]];
+    }
+  }
+
+  // 如果没有找到，返回默认值或undefined
+  return options.default || undefined;
 };

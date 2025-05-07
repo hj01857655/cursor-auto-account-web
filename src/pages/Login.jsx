@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
-import { Card, Tabs, Form, Input, Button, message } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Tabs, Form, Input, Button, message, Image } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '../services/api';
-import { saveToken } from '../utils';
+import { saveToken, isMobile } from '../utils';
 import { useUser } from '../contexts/UserContext';
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [loading, setLoading] = useState(false);
+  const [mobile, setMobile] = useState(isMobile());
   const navigate = useNavigate();
   const { updateUser, fetchUserInfo } = useUser();
+
+  // 监听窗口大小变化，更新移动设备状态
+  useEffect(() => {
+    const handleResize = () => {
+      setMobile(isMobile());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // 登录表单
   const [loginForm] = Form.useForm();
@@ -78,18 +91,44 @@ const Login = () => {
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh',
-      background: '#f0f2f5'
+      background: '#f0f2f5',
+      padding: mobile ? '0 16px' : 0
     }}>
-      <Card style={{ width: 400 }}>
-        <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Cursor 账号管理系统</h1>
+      <Card style={{
+        width: mobile ? '100%' : 400,
+        maxWidth: '100%',
+        borderRadius: mobile ? '8px' : '2px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+          <Image
+            src="/favicon.svg"
+            alt="Logo"
+            preview={false}
+            width={mobile ? 48 : 64}
+            style={{ marginBottom: 16 }}
+          />
+          <h1 style={{
+            fontSize: mobile ? '20px' : '24px',
+            margin: 0
+          }}>
+            Cursor 账号管理系统
+          </h1>
+        </div>
 
-        <Tabs activeKey={activeTab} onChange={handleTabChange}>
+        <Tabs
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          centered={true}
+          size={mobile ? 'small' : 'middle'}
+        >
           <Tabs.TabPane key="login" tab="登录">
             <Form
               form={loginForm}
               name="login"
               onFinish={handleLogin}
               autoComplete="off"
+              size={mobile ? 'middle' : 'large'}
             >
               <Form.Item
                 name="username"
@@ -106,7 +145,13 @@ const Login = () => {
               </Form.Item>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading} block>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  block
+                  size={mobile ? 'middle' : 'large'}
+                >
                   登录
                 </Button>
               </Form.Item>
@@ -119,6 +164,7 @@ const Login = () => {
               name="register"
               onFinish={handleRegister}
               autoComplete="off"
+              size={mobile ? 'middle' : 'large'}
             >
               <Form.Item
                 name="username"
@@ -144,7 +190,13 @@ const Login = () => {
               </Form.Item>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading} block>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  block
+                  size={mobile ? 'middle' : 'large'}
+                >
                   注册
                 </Button>
               </Form.Item>
