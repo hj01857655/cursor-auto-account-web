@@ -1,9 +1,9 @@
+import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Spin } from 'antd';
-import { isAdmin } from '../utils';
-import MainLayout from '../layouts/MainLayout';
 import { useUser } from '../contexts/UserContext';
+import MainLayout from '../layouts/MainLayout';
+import { isAdmin } from '../utils';
 
 // 私有路由组件，用于保护需要登录才能访问的页面
 const PrivateRoute = ({ children, adminOnly = false }) => {
@@ -24,7 +24,9 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Spin size="large" tip="正在验证身份..." />
+        <Spin size="large">
+          <div style={{ padding: '50px' }}>正在验证身份...</div>
+        </Spin>
       </div>
     );
   }

@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Button, Dropdown, message, Drawer, Space } from 'antd';
 import {
-  UserOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  HomeOutlined,
-  IdcardOutlined,
-  MenuOutlined
+    HomeOutlined,
+    IdcardOutlined,
+    LogoutOutlined,
+    MenuFoldOutlined,
+    MenuOutlined,
+    MenuUnfoldOutlined,
+    SettingOutlined,
+    UserOutlined
 } from '@ant-design/icons';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { clearToken, isAdmin, isMobile, isSmallMobile, BREAKPOINTS } from '../utils';
+import { Button, Drawer, Dropdown, Layout, Menu, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { clearToken, isAdmin, isMobile, isSmallMobile } from '../utils';
 
 const { Header, Sider, Content } = Layout;
 
